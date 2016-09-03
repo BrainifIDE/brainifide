@@ -9,7 +9,7 @@ class Insert extends Component {
       showSubmenu: false
     };
 
-    ["toggleSubmenu", "onAddAddition", "onAddFindSign", "onAddMultiplication", "onAddPrintValue"].forEach(fn => {
+    ["toggleSubmenu", "onAddAddition", "onAddFindSign", "onAddMultiplication", "onAddModulo", "onAddPrintValue"].forEach(fn => {
       this[fn] = this[fn].bind(this);
     });
   }
@@ -28,6 +28,9 @@ class Insert extends Component {
             </li>
             <li onClick={ this.onAddMultiplication }>
               Multiplication
+            </li>
+            <li onClick={ this.onAddModulo }>
+              Modulo
             </li>
             <li onClick={ this.onAddPrintValue }>
               Print Cell
@@ -77,6 +80,15 @@ class Insert extends Component {
     });
 
     snippetsEventEmitter.emitSnippet("[>>+>+<<<-]>>>[<<<+>>>-]<<+>[<->[>++++++++++<[->-[>+>>]>[+[-<+>]>+>>]<<<<<]>[-]++++++++[<++++++>-]>[<<+>>-]>[<<+>>-]<<]>]<[->>++++++++[<++++++>-]]<[.[-]<]<", "Prints the current value of cell");
+  }
+
+  onAddModulo() {
+    this.setState({
+      showSubmenu: false
+    });
+
+    snippetsEventEmitter.emitSnippet("Modulo n % d; n: current cell, d: cell right of n");
+    snippetsEventEmitter.emitSnippet("[>->+<[>]>[<+>-]<<[<]>-]>[-]>[-<<+>>]<++++++++[<++++++>-]<.");
   }
 }
 
