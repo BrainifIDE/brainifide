@@ -17,6 +17,8 @@
 .App .code-container textarea {
   flex-grow: 1;
   resize: none;
+  font-family: 'Source Code Pro', monospace;
+  font-size: 15px;
 }
 
 .App .buttons {
