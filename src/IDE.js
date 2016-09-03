@@ -29,7 +29,7 @@ class IDE extends Component {
       stdout: "",
       input: "",
       timerSpeed: 500,
-      name: "",
+      name: "Untitled",
       dirty: false,
       contextStack: Immutable.Stack.of(makeMockContext()),
       instructionsStack: new Immutable.Stack(),
@@ -84,9 +84,12 @@ class IDE extends Component {
       <div className="IDE">
         <div className="name-container">
           <input type="text"
+                 className="name-field"
                  value={ this.state.name }
                  onChange={ this.onNameChange } />
-          <button onClick={ this.onSave }>Save</button>
+         <button className="save" onClick={ this.onSave }>
+           <i className="fa fa-save fa-2x" />
+         </button>
         </div>
 
         <div className="code-container">

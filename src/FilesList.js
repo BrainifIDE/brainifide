@@ -12,6 +12,8 @@ class FilesList extends Component {
       selectedFile: -1,
       files: []
     };
+
+    this.newCode = this.newCode.bind(this);
   }
 
   componentDidMount() {
@@ -50,6 +52,10 @@ class FilesList extends Component {
       <div className="FilesList">
         <ul>
           { this.renderFiles() }
+          <li className="file"
+              onClick={ this.newCode }>
+            <span className="name">New</span>
+          </li>
         </ul>
       </div>
     );
@@ -66,6 +72,10 @@ class FilesList extends Component {
     if (confirm(`Are you sure you want to delete ${file.name}?`)) {
       deleteFile(store.dispatch.bind(store), id);
     }
+  }
+
+  newCode() {
+    location.reload();
   }
 }
 
