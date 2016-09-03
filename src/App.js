@@ -19,11 +19,18 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <textarea value={ this.state.code }
-                  onChange={ this.onCodeChange } />
+        <div className="code-container">
+          <textarea value={ this.state.code }
+                    onChange={ this.onCodeChange } />
+        </div>
 
-        <button onClick={ this.onRunCode } >Run</button>
-        <div>{ this.state.stdout }</div>
+        <div className="buttons">
+          <button onClick={ this.onRunCode } >Run</button>
+        </div>
+
+        <div className="stdout">
+          { this.state.stdout }
+        </div>
       </div>
     );
   }
