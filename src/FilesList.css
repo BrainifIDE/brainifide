@@ -1,5 +1,19 @@
+.FilesList {
+  flex-grow: 1;
+}
+
 .FilesList ul {
   margin: 0;
   padding: 0;
   list-style: none;
+}
+
+.FilesList li {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  cursor: pointer;
+}
+
+.FilesList li.active {
+  background-color: lightgray;
 }

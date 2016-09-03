@@ -4,17 +4,20 @@ import DataStoreVisualizer from './DataStoreVisualizer';
 import './IDE.css';
 import { addFile } from './store/actions/files';
 import store from './store/store';
+import { selectFile } from './store/actions/selectedFile';
 
 class IDE extends Component {
   constructor() {
     super();
 
     this.state = {
+      id: -1,
       code: "",
       stdout: "",
       input: "",
       timerSpeed: 1000,
       name: "",
+      dirty: false,
       executionContext: {
         table: {},
         position: 0
@@ -23,6 +26,34 @@ class IDE extends Component {
 
     ["onInputChange", "onCodeChange", "onRunCode", "onStepCode", "onTimerSpeedChange", "onAutoStepCode", "onStopAutoStepCode", "onNameChange", "onSave"].forEach(fn => {
       this[fn] = this[fn].bind(this);
+    });
+  }
+
+  componentDidMount() {
+    store.subscribe(() => {
+      const state = store.getState();
+      const id = state.selectedFile;
+      const file = state.files.find(file => file.id === id);
+
+      if (!file) {
+        return;
+      }
+
+      if (id === this.state.id) {
+        return;
+      }
+
+      if (!this.state.dirty || confirm("You have unsaved work. Are you sure?")) {
+        this.setState({
+          code: file.content,
+          stdout: "",
+          input: "",
+          name: file.name,
+          id: file.id
+        });
+      } else {
+        store.dispatch(selectFile(this.state.id));
+      }
     });
   }
 
@@ -69,7 +100,8 @@ class IDE extends Component {
 
   onCodeChange(event) {
     this.setState({
-      code: event.target.value
+      code: event.target.value,
+      dirty: true
     });
 
     const ast = parser(event.target.value);
@@ -127,6 +159,10 @@ class IDE extends Component {
   }
 
   onSave() {
+    // Deal with optimistic update
+    this.setState({
+      dirty: false
+    });
     addFile(store.dispatch.bind(store), {
       content: this.state.code,
       name: this.state.name
