@@ -28,6 +28,13 @@ function initFilesList(dispatch) {
 
 function addFile(dispatch, file) {
   dbPromise.then(db => {
+    db.codes.add({
+      content: file.content,
+      name: file.name,
+      createdAt: new Date().valueOf(),
+      updatedAt: new Date().valueOf()
+    });
+  }).then(() => {
     dispatch({
       type: ADD_FILE,
       file

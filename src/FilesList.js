@@ -27,8 +27,8 @@ class FilesList extends Component {
   }
 
   renderFiles() {
-    return this.state.files.map(({name}) => {
-      return <li key={name}>{name}</li>;
+    return this.state.files.map(({id, name}) => {
+      return <li key={id}>{name}</li>;
     });
   }
 
