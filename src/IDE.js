@@ -164,6 +164,7 @@ class IDE extends Component {
       dirty: false
     });
     addFile(store.dispatch.bind(store), {
+      id: this.state.id,
       content: this.state.code,
       name: this.state.name
     });

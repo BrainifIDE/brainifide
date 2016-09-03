@@ -1,4 +1,4 @@
-import { LOAD_FILES_LIST, SET_FILES_LIST, ADD_FILE } from '../actionTypes';
+import { LOAD_FILES_LIST, SET_FILES_LIST } from '../actionTypes';
 import dbPromise from '../../db';
 
 function loadFilesList() {
@@ -28,17 +28,24 @@ function initFilesList(dispatch) {
 
 function addFile(dispatch, file) {
   dbPromise.then(db => {
-    db.codes.add({
-      content: file.content,
-      name: file.name,
-      createdAt: new Date().valueOf(),
-      updatedAt: new Date().valueOf()
-    });
+    if (file.id !== -1) {
+      return db.codes.put({
+        id: file.id,
+        content: file.content,
+        name: file.name,
+        createdAt: file.createdAt,
+        updatedAt: new Date().valueOf()
+      });
+    } else {
+      return db.codes.add({
+        content: file.content,
+        name: file.name,
+        createdAt: new Date().valueOf(),
+        updatedAt: new Date().valueOf()
+      });
+    }
   }).then(() => {
-    dispatch({
-      type: ADD_FILE,
-      file
-    });
+    initFilesList(dispatch);
   });
 }
 
