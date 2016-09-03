@@ -19,6 +19,8 @@ class IDE extends Component {
       timerSpeed: 1000,
       name: "",
       dirty: false,
+      line: 0,
+      column: 0,
       executionContext: {
         table: {},
         pointer: 0
@@ -74,6 +76,11 @@ class IDE extends Component {
           <textarea value={ this.state.code }
                     onChange={ this.onCodeChange }
                     ref={ c => this.code = c }/>
+          <div style={{
+            display: this.state.column !== undefined ? 'block' : 'none',
+            top: (20 * (this.state.line + 1) + 0) + "px",
+            left: (9 * this.state.column + 3) + "px"
+          }} className="cursor"/>
         </div>
 
         <h3>Inputs:</h3>
@@ -105,7 +112,9 @@ class IDE extends Component {
   onCodeChange(event) {
     this.setState({
       code: event.target.value,
-      dirty: true
+      dirty: true,
+      line: undefined,
+      column: undefined
     });
 
     const ast = parser(event.target.value);
@@ -115,7 +124,9 @@ class IDE extends Component {
 
   onInputChange(event) {
     this.setState({
-      input: event.target.value
+      input: event.target.value,
+      line: undefined,
+      column: undefined
     });
 
     const ast = parser(this.state.code);
@@ -136,10 +147,12 @@ class IDE extends Component {
   }
 
   onStepCode() {
-    this.stepper((context, stdout) => {
+    this.stepper((context, stdout, instruction) => {
       this.setState({
         stdout,
-        executionContext: context
+        executionContext: context,
+        line: instruction && instruction.line,
+        column: instruction && instruction.column
       });
     });
   }

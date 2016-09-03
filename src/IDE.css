@@ -12,6 +12,15 @@
 .IDE .code-container {
   flex-basis: 0;
   flex-grow: 50;
+  position: relative;
+}
+
+.IDE .code-container .cursor {
+  height: 4px;
+  width: 9px;
+  background-color: red;
+  position: absolute;
+  transition: left 0.1s ease-out, top 0.1s ease-out;
 }
 
 .IDE .input-container {
