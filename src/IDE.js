@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { parser, execute } from 'bfvm';
+import { parser, execute, executeStep } from 'bfvm';
 import DataStoreVisualizer from './DataStoreVisualizer';
 
 class IDE extends Component {
@@ -10,13 +10,14 @@ class IDE extends Component {
       code: "",
       stdout: "",
       input: "",
+      timerSpeed: 1000,
       executionContext: {
         table: {},
         position: 0
       }
     };
 
-    ["onInputChange", "onCodeChange", "onRunCode"].forEach(fn => {
+    ["onInputChange", "onCodeChange", "onRunCode", "onStepCode", "onTimerSpeedChange", "onAutoStepCode", "onStopAutoStepCode"].forEach(fn => {
       this[fn] = this[fn].bind(this);
     });
   }
@@ -41,6 +42,11 @@ class IDE extends Component {
 
         <div className="buttons">
           <button onClick={ this.onRunCode }>Run</button>
+          <button onClick={ this.onStepCode }>Stepthrough</button>
+          <textarea value={ this.state.timerSpeed }
+                    onChange={ this.onTimerSpeedChange } />
+          <button onClick={ this.onAutoStepCode }>Auto Stepthrough</button>
+          <button onClick={ this.onStopAutoStepCode }>Stop Auto Stepthrough</button>
         </div>
 
         <div className="stdout">
@@ -54,12 +60,18 @@ class IDE extends Component {
     this.setState({
       code: event.target.value
     });
+
+    const ast = parser(event.target.value);
+    this.stepper = executeStep(ast, this.state.input);
   }
 
   onInputChange(event) {
     this.setState({
       input: event.target.value
     });
+
+    const ast = parser(this.state.code);
+    this.stepper = executeStep(ast, event.target.value);
   }
 
   onRunCode() {
@@ -70,6 +82,31 @@ class IDE extends Component {
       stdout: executionResults.stdout,
       executionContext: executionResults.context
     });
+  }
+
+  onStepCode() {
+    this.stepper((context, stdout) => {
+      this.setState({
+        stdout,
+        executionContext: context
+      });
+    });
+  }
+
+  onAutoStepCode() {
+    this.intervalID = setInterval(this.onStepCode, this.state.timerSpeed);
+  }
+
+  onStopAutoStepCode() {
+    clearInterval(this.intervalID);
+  }
+
+  onTimerSpeedChange(event) {
+    if (/^\d*$/.test(event.target.value)) {
+      this.setState({
+        timerSpeed: event.target.value
+      });
+    }
   }
 }
 
