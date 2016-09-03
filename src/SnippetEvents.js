@@ -2,8 +2,8 @@ import EventEmitter from 'events';
 
 const snippetsEventEmitter = new EventEmitter();
 
-snippetsEventEmitter.emitSnippet = function(snippet) {
-  this.emit('snippets', snippet);
+snippetsEventEmitter.emitSnippet = function(snippet, comment) {
+  this.emit('snippets', snippet, comment);
 };
 
 snippetsEventEmitter.addSnippetsListener = function(fn) {

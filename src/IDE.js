@@ -178,12 +178,18 @@ class IDE extends Component {
     });
   }
 
-  onAddSnippet(snippet) {
+  onAddSnippet(snippet, comment) {
     const index = this.code.selectionStart;
     let code = this.state.code.substr(0, index);
 
     if (code.length && code[code.length - 1] !== '\n') {
       code += "\n";
+    }
+
+    if (comment) {
+      code += "================================================================================\n";
+      code = code + comment + "\n";
+      code += "================================================================================\n";
     }
 
     code = code + snippet + "\n" + this.state.code.substr(index);
