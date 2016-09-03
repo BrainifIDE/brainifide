@@ -9,7 +9,7 @@ class Insert extends Component {
       showSubmenu: false
     };
 
-    ["toggleSubmenu", "onAddAddition"].forEach(fn => {
+    ["toggleSubmenu", "onAddAddition", "onAddFindSign", "onAddMultiplication", "onAddPrintValue"].forEach(fn => {
       this[fn] = this[fn].bind(this);
     });
   }
@@ -25,6 +25,15 @@ class Insert extends Component {
           <ul className="submenu">
             <li onClick={ this.onAddAddition }>
               Addition
+            </li>
+            <li onClick={ this.onAddMultiplication }>
+              Multiplication
+            </li>
+            <li onClick={ this.onAddPrintValue }>
+              Print Cell
+            </li>
+            <li onClick={ this.onAddFindSign }>
+              Find Sign
             </li>
           </ul>
         </div>
@@ -43,7 +52,35 @@ class Insert extends Component {
       showSubmenu: false
     });
 
+    snippetsEventEmitter.emitSnippet("Addition a + b; a: current cell; b: cell right of a");
     snippetsEventEmitter.emitSnippet(">[-<+>]<");
+  }
+
+  onAddMultiplication() {
+    this.setState({
+      showSubmenu: false
+    });
+
+    snippetsEventEmitter.emitSnippet("Addition a + b; a: current cell; b: cell right of a");
+    snippetsEventEmitter.emitSnippet("[<+>-]<[>>[-<+>>+<]>[<+>-]<<<-]>>[-]<");
+  }
+
+  onAddFindSign() {
+    this.setState({
+      showSubmenu: false
+    });
+
+    snippetsEventEmitter.emitSnippet("Returns 1 if the current cell is positive. 0 otherwise. Value in current cell will be lost");
+    snippetsEventEmitter.emitSnippet(">>+>+<<<[>+>[<[-<+<+>>]>->-]>[<<[-<-<+>>]>+>->]<<<<<[->>+<<]>>>>+<<<]>[-]>>[-]<[-<<+>]<>++++++++[<++++++>-]<.");
+  }
+
+  onAddPrintValue() {
+    this.setState({
+      showSubmenu: false
+    });
+
+    snippetsEventEmitter.emitSnippet("Prints the current value of cell");
+    snippetsEventEmitter.emitSnippet("[>>+>+<<<-]>>>[<<<+>>>-]<<+>[<->[>++++++++++<[->-[>+>>]>[+[-<+>]>+>>]<<<<<]>[-]++++++++[<++++++>-]>[<<+>>-]>[<<+>>-]<<]>]<[->>++++++++[<++++++>-]]<[.[-]<]<");
   }
 }
 
