@@ -8,10 +8,11 @@ class App extends Component {
 
     this.state = {
       code: "",
-      stdout: ""
+      stdout: "",
+      input: ""
     };
 
-    ["onCodeChange", "onRunCode"].forEach(fn => {
+    ["onInputChange", "onCodeChange", "onRunCode"].forEach(fn => {
       this[fn] = this[fn].bind(this);
     });
   }
@@ -22,6 +23,12 @@ class App extends Component {
         <div className="code-container">
           <textarea value={ this.state.code }
                     onChange={ this.onCodeChange } />
+        </div>
+
+        <h3>Inputs:</h3>
+        <div className="code-container">
+          <textarea value={ this.state.input }
+                    onChange={ this.onInputChange } />
         </div>
 
         <div className="buttons">
@@ -35,6 +42,12 @@ class App extends Component {
     );
   }
 
+  onInputChange(event) {
+    this.setState({
+      input: event.target.value
+    });
+  }
+
   onCodeChange(event) {
     this.setState({
       code: event.target.value
@@ -46,7 +59,7 @@ class App extends Component {
 
     const ast = parser(this.state.code);
     this.setState({
-      stdout: execute(ast)
+      stdout: execute(ast, this.state.input)
     });
   }
 }
