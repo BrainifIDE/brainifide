@@ -7,7 +7,7 @@ class DataStoreVisualizer extends Component {
     const context = this.props.executionContext;
 
     for (let i = -7; i <= 7; i++) {
-      numbers.push(context.table[context.pointer + i] || 0);
+      numbers.push(context.table.get(context.pointer + i) || 0);
     }
 
     const output = numbers.map((num, i) => {

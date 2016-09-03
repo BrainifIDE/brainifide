@@ -1,11 +1,23 @@
 import React, { Component } from 'react';
-import { parser, execute, executeStep } from 'bfvm';
+import { parser, execute, executeStep, executeSingleInstruction, ExecutionContext } from 'bfvm';
 import DataStoreVisualizer from './DataStoreVisualizer';
 import './IDE.css';
 import { addFile } from './store/actions/files';
 import store from './store/store';
 import { selectFile } from './store/actions/selectedFile';
 import snippetsEventEmitter from './SnippetEvents';
+import Immutable from 'immutable';
+
+function makeMockContext() {
+  return {
+    table: {
+      get() {
+        return 0;
+      }
+    },
+    pointer: 0
+  };
+}
 
 class IDE extends Component {
   constructor() {
@@ -19,13 +31,15 @@ class IDE extends Component {
       timerSpeed: 1000,
       name: "",
       dirty: false,
-      executionContext: {
-        table: {},
-        pointer: 0
-      }
+      contextStack: Immutable.Stack.of(makeMockContext()),
+      instructionsStack: new Immutable.Stack(),
+      stdoutStack: Immutable.Stack.of(''),
+      stdinStack: Immutable.Stack.of(Immutable.Stack(['']))
     };
 
-    ["onInputChange", "onCodeChange", "onRunCode", "onStepCode", "onTimerSpeedChange", "onAutoStepCode", "onStopAutoStepCode", "onNameChange", "onSave", "onAddSnippet"].forEach(fn => {
+    this.stopAutoStep = true;
+
+    ["onInputChange", "onCodeChange", "onRunCode", "onStepCode", "onTimerSpeedChange", "onAutoStepCode", "onStopAutoStepCode", "onNameChange", "onSave", "onAddSnippet", "onPreviousStep"].forEach(fn => {
       this[fn] = this[fn].bind(this);
     });
   }
@@ -62,6 +76,10 @@ class IDE extends Component {
   }
 
   render() {
+    const instruction = this.state.instructionsStack.first();
+    const line = instruction && instruction.line;
+    const column = instruction && instruction.column;
+
     return (
       <div className="IDE">
         <div className="name-container">
@@ -76,9 +94,9 @@ class IDE extends Component {
                     onChange={ this.onCodeChange }
                     ref={ c => this.code = c }/>
           <div style={{
-            display: this.state.column !== undefined ? 'block' : 'none',
-            top: (20 * (this.state.line + 1) + 0) + "px",
-            left: (9 * this.state.column + 3) + "px"
+            display: column !== undefined ? 'block' : 'none',
+            top: (20 * (line + 1) + 0) + "px",
+            left: (9 * column + 3) + "px"
           }} className="cursor"/>
         </div>
 
@@ -89,11 +107,12 @@ class IDE extends Component {
         </div>
 
         <div className="visualizer">
-          <DataStoreVisualizer executionContext={ this.state.executionContext } />
+          <DataStoreVisualizer executionContext={ this.state.contextStack.first() } />
         </div>
 
         <div className="buttons">
           <button onClick={ this.onRunCode }>Run</button>
+          <button onClick={ this.onPreviousStep }>Previous Step</button>
           <button onClick={ this.onStepCode }>Stepthrough</button>
           <input type="range"
                  min="100"
@@ -105,7 +124,7 @@ class IDE extends Component {
         </div>
 
         <div className="stdout">
-          { this.state.stdout }
+          { this.state.stdoutStack.first() }
         </div>
       </div>
     );
@@ -115,8 +134,10 @@ class IDE extends Component {
     this.setState({
       code: event.target.value,
       dirty: true,
-      line: undefined,
-      column: undefined
+      contextStack: Immutable.Stack.of(makeMockContext()),
+      instructionsStack: new Immutable.Stack(),
+      stdoutStack: Immutable.Stack.of(''),
+      stdinStack: Immutable.Stack.of(Immutable.Stack(['']))
     });
 
     const ast = parser(event.target.value);
@@ -127,8 +148,10 @@ class IDE extends Component {
   onInputChange(event) {
     this.setState({
       input: event.target.value,
-      line: undefined,
-      column: undefined
+      contextStack: Immutable.Stack.of(makeMockContext()),
+      instructionsStack: new Immutable.Stack(),
+      stdoutStack: Immutable.Stack.of(''),
+      stdinStack: Immutable.Stack.of(Immutable.Stack(event.target.value.split('')))
     });
 
     const ast = parser(this.state.code);
@@ -141,44 +164,53 @@ class IDE extends Component {
     const executionResults = execute(ast, this.state.input);
 
     this.setState({
-      stdout: executionResults.stdout,
-      executionContext: executionResults.context
+      stdoutStack: Immutable.Stack.of(executionResults.stdout),
+      stdinStack: Immutable.Stack.of(new Immutable.Stack([''])),
+      contextStack: Immutable.Stack.of(executionResults.context),
     });
   }
 
   onStepCode() {
-    this.stepper((context, stdout, instruction) => {
-      this.setState({
-        stdout,
-        executionContext: context,
-        line: instruction && instruction.line,
-        column: instruction && instruction.column
-      });
-    });
-  }
+    let instruction;
+    let context;
+    let stdout;
+    let stdin;
 
-  recursiveStep() {
-    if (this.stopAutoStep) {
+    if (this.state.instructionsStack.isEmpty()) {
+      instruction = parser(this.state.code)[0];
+      context = new ExecutionContext();
+      stdout = '';
+      stdin = Immutable.Stack(this.state.input.split(''));
+    } else {
+      instruction = this.state.instructionsStack.first();
+      context = this.state.contextStack.first();
+      stdout = this.state.stdoutStack.first();
+      stdin = this.state.stdinStack.first();
+    }
+
+    if (!instruction) {
       return;
     }
 
-    this.stepper((context, stdout, instruction) => {
-      this.setState({
-        stdout,
-        executionContext: context,
-        line: instruction && instruction.line,
-        column: instruction && instruction.column
-      });
+    const results = executeSingleInstruction(context, instruction, stdin);
 
-      if (instruction) {
-        setTimeout(this.recursiveStep.bind(this), this.state.timerSpeed);
-      }
+    // TODO stdin
+    this.setState({
+      stdout: results.stdout,
+      contextStack: this.state.contextStack.push(results.context),
+      instructionsStack: this.state.instructionsStack.push(results.instruction),
+      stdoutStack: this.state.stdoutStack.push(stdout + results.stdout),
+      stdinStack: this.state.stdinStack.push(results.stdin)
     });
+
+    if (!this.stopAutoStep && results.instruction) {
+      setTimeout(this.onStepCode, this.state.timerSpeed);
+    }
   }
 
   onAutoStepCode() {
     this.stopAutoStep = false;
-    setTimeout(this.recursiveStep.bind(this), this.state.timerSpeed);
+    setTimeout(this.onStepCode, this.state.timerSpeed);
   }
 
   onStopAutoStepCode() {
@@ -229,6 +261,15 @@ class IDE extends Component {
 
     this.setState({
       code
+    });
+  }
+
+  onPreviousStep() {
+    this.setState({
+      contextStack: this.state.contextStack.pop(),
+      instructionsStack: this.state.instructionsStack.pop(),
+      stdoutStack: this.state.stdoutStack.pop(),
+      stdinStack: this.state.stdinStack.pop()
     });
   }
 }
