@@ -22,31 +22,36 @@ class App extends Component {
     });
   }
 
+class IDE {
+  <div className="code-container">
+    <textarea value={ this.state.code }
+              onChange={ this.onCodeChange } />
+  </div>
+
+  <h3>Inputs:</h3>
+  <div className="code-container">
+    <textarea value={ this.state.input }
+              onChange={ this.onInputChange } />
+  </div>
+
+  <div className="visualizer">
+    <DataStoreVisualizer executionContext={ this.state.executionContext } />
+  </div>
+
+  <div className="buttons">
+    <button onClick={ this.onRunCode }>Run</button>
+  </div>
+
+  <div className="stdout">
+    { this.state.stdout }
+  </div>
+
+}
+
   render() {
     return (
       <div className="App">
-        <div className="code-container">
-          <textarea value={ this.state.code }
-                    onChange={ this.onCodeChange } />
-        </div>
-
-        <h3>Inputs:</h3>
-        <div className="code-container">
-          <textarea value={ this.state.input }
-                    onChange={ this.onInputChange } />
-        </div>
-
-        <div className="visualizer">
-          <DataStoreVisualizer executionContext={ this.state.executionContext } />
-        </div>
-
-        <div className="buttons">
-          <button onClick={ this.onRunCode }>Run</button>
-        </div>
-
-        <div className="stdout">
-          { this.state.stdout }
-        </div>
+      <IDE />
       </div>
     );
   }
