@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import { parser, execute } from 'bfvm';
 import DataStoreVisualizer from './DataStoreVisualizer';
+import FilesList from './FilesList';
 
 class App extends Component {
   constructor() {
@@ -25,27 +26,33 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <div className="code-container">
-          <textarea value={ this.state.code }
-                    onChange={ this.onCodeChange } />
+        <div className="left">
+          <FilesList />
         </div>
 
-        <h3>Inputs:</h3>
-        <div className="code-container">
-          <textarea value={ this.state.input }
-                    onChange={ this.onInputChange } />
-        </div>
+        <div className="right">
+          <div className="code-container">
+            <textarea value={ this.state.code }
+                      onChange={ this.onCodeChange } />
+          </div>
 
-        <div className="visualizer">
-          <DataStoreVisualizer executionContext={ this.state.executionContext } />
-        </div>
+          <h3>Inputs:</h3>
+          <div className="code-container">
+            <textarea value={ this.state.input }
+                      onChange={ this.onInputChange } />
+          </div>
 
-        <div className="buttons">
-          <button onClick={ this.onRunCode }>Run</button>
-        </div>
+          <div className="visualizer">
+            <DataStoreVisualizer executionContext={ this.state.executionContext } />
+          </div>
 
-        <div className="stdout">
-          { this.state.stdout }
+          <div className="buttons">
+            <button onClick={ this.onRunCode }>Run</button>
+          </div>
+
+          <div className="stdout">
+            { this.state.stdout }
+          </div>
         </div>
       </div>
     );

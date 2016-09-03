@@ -1,0 +1,2 @@
+export const LOAD_FILES_LIST = "LOAD_FILES_LIST";
+export const SET_FILES_LIST = "SET_FILES_LIST";
