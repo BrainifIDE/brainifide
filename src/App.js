@@ -58,8 +58,9 @@ class App extends Component {
     event.preventDefault();
 
     const ast = parser(this.state.code);
+    const executionResults = execute(ast, this.state.input);
     this.setState({
-      stdout: execute(ast, this.state.input)
+      stdout: executeResults.stdout
     });
   }
 }
