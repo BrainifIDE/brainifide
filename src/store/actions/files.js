@@ -1,4 +1,4 @@
-import { LOAD_FILES_LIST, SET_FILES_LIST } from '../actionTypes';
+import { LOAD_FILES_LIST, SET_FILES_LIST, DELETE_FILE } from '../actionTypes';
 import dbPromise from '../../db';
 
 function loadFilesList() {
@@ -49,4 +49,15 @@ function addFile(dispatch, file) {
   });
 }
 
-export { initFilesList, addFile };
+function deleteFile(dispatch, id) {
+  dbPromise.then(db => {
+    return db.codes.delete(id);
+  }).then(() => {
+    dispatch({
+      type: DELETE_FILE,
+      id
+    });
+  });
+}
+
+export { initFilesList, addFile, deleteFile };

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import store from './store/store';
-import { initFilesList } from './store/actions/files';
+import { initFilesList, deleteFile } from './store/actions/files';
 import './FilesList.css';
 import { selectFile } from './store/actions/selectedFile';
 
@@ -33,9 +33,13 @@ class FilesList extends Component {
     return this.state.files.map(({id, name}) => {
       return (
         <li key={id}
-            className={ id === this.state.selectedFile ? 'active' : '' }
+            className={ id === this.state.selectedFile ? 'file active' : 'file' }
             onClick={ this.onSelectFile.bind(this, id) }>
-          { name }
+          <span className="name">{ name }</span>
+          <span className="trash"
+                onClick={ this.onDeleteFile.bind(this, id) }>
+            <i className="fa fa-trash-o" />
+          </span>
         </li>
       );
     });
@@ -53,6 +57,15 @@ class FilesList extends Component {
 
   onSelectFile(id, event) {
     store.dispatch(selectFile(id));
+  }
+
+  onDeleteFile(id, event) {
+    event.stopPropagation();
+    const file = this.state.files.find(file => file.id === id);
+
+    if (confirm(`Are you sure you want to delete ${file.name}?`)) {
+      deleteFile(store.dispatch.bind(store), id);
+    }
   }
 }
 

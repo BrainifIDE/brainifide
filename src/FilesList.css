@@ -9,11 +9,28 @@
 }
 
 .FilesList li {
+  cursor: pointer;
+  display: flex;
+  align-items: stretch;
+}
+
+.FilesList li {
   padding-top: 5px;
   padding-bottom: 5px;
-  cursor: pointer;
+  padding-left: 5px;
+  border-radius: 5px;
+  display: flex;
 }
 
 .FilesList li.active {
   background-color: lightgray;
+}
+
+.FilesList li .name {
+  flex-grow: 1;
+}
+
+.FilesList li .trash {
+  padding-left: 5px;
+  padding-right: 5px;
 }
