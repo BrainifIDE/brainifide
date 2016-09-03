@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import './App.css';
-import { parser, execute } from 'bfvm';
+import { parser, execute, executeStep } from 'bfvm';
 import DataStoreVisualizer from './DataStoreVisualizer';
 
 class App extends Component {
   constructor() {
     super();
+
+    this.stepper = () => {};
 
     this.state = {
       code: "",
@@ -17,7 +19,7 @@ class App extends Component {
       }
     };
 
-    ["onInputChange", "onCodeChange", "onRunCode"].forEach(fn => {
+    ["onInputChange", "onCodeChange", "onRunCode", "onStepCode"].forEach(fn => {
       this[fn] = this[fn].bind(this);
     });
   }
@@ -44,6 +46,10 @@ class App extends Component {
           <button onClick={ this.onRunCode }>Run</button>
         </div>
 
+        <div className="buttons">
+          <button onClick={ this.onStepCode }>Stepthrough</button>
+        </div>
+
         <div className="stdout">
           { this.state.stdout }
         </div>
@@ -55,12 +61,20 @@ class App extends Component {
     this.setState({
       input: event.target.value
     });
+
+    const ast = parser(this.state.code);
+    console.log(ast);
+    this.stepper = executeStep(ast, this.state.input);
   }
 
   onCodeChange(event) {
     this.setState({
       code: event.target.value
     });
+
+    const ast = parser(this.state.code);
+    console.log(this.state.code, event.target.value);
+    this.stepper = executeStep(ast, this.state.input);
   }
 
   onRunCode(event) {
@@ -71,6 +85,16 @@ class App extends Component {
     this.setState({
       stdout: executionResults.stdout,
       executionContext: executionResults.context
+    });
+  }
+
+  onStepCode(event) {
+    this.stepper((context, stdout, instruction) => {
+      console.log(instruction);
+      this.setState({
+        stdout: stdout,
+        executionContext: context
+      })
     });
   }
 }
