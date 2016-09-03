@@ -1,18 +1,32 @@
 .DataStoreVisualizer {
-  display: flex;
+  height: 50px;
+  width: 551px;
+  position: relative;
+  overflow: hidden;
 }
 
 .DataStoreVisualizer .cell {
-  padding-left: 5px;
-  padding-right: 5px;
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  top: 0;
   border: 1px solid black;
   display: flex;
   flex-direction: column;
+  border-right: 0;
+  transition: left 0.1s ease-out;
+  text-align: center;
 }
 
-.DataStoreVisualizer .cell:nth-of-type(6) {
+.DataStoreVisualizer .cell:last-of-type {
+  border-right: 1px solid black;
+}
+
+.DataStoreVisualizer .cell.highlight {
+  left: 250px;
   border: 1px solid red;
   background-color: rgba(255, 0, 0, 0.1);
+  z-index: 100;
 }
 
 .DataStoreVisualizer .cell div {

@@ -6,18 +6,22 @@ class DataStoreVisualizer extends Component {
     const numbers = [];
     const context = this.props.executionContext;
 
-    for (let i = -5; i <= 5; i++) {
+    for (let i = -7; i <= 7; i++) {
       numbers.push(context.table[context.pointer + i] || 0);
     }
 
-    return numbers.map((num, i) => {
+    const output = numbers.map((num, i) => {
       return (
-        <div key={i} className="cell">
+        <div key={context.pointer + i - 7} className="cell" style={{left: ((i-2) * 50) + "px"}}>
           <div>{ num }</div>
-          <div>{ context.pointer + i - 5}</div>
+          <div>{ context.pointer + i - 7}</div>
         </div>
       );
     });
+
+    output.push(<div key="highlight" className="cell highlight" />);
+
+    return output;
   }
 
   render() {
