@@ -28,7 +28,7 @@ class IDE extends Component {
       code: "",
       stdout: "",
       input: "",
-      timerSpeed: 1000,
+      timerSpeed: 500,
       name: "",
       dirty: false,
       contextStack: Immutable.Stack.of(makeMockContext()),
@@ -194,7 +194,6 @@ class IDE extends Component {
 
     const results = executeSingleInstruction(context, instruction, stdin);
 
-    // TODO stdin
     this.setState({
       stdout: results.stdout,
       contextStack: this.state.contextStack.push(results.context),
@@ -204,13 +203,13 @@ class IDE extends Component {
     });
 
     if (!this.stopAutoStep && results.instruction) {
-      setTimeout(this.onStepCode, this.state.timerSpeed);
+      setTimeout(this.onStepCode, 1100 - this.state.timerSpeed);
     }
   }
 
   onAutoStepCode() {
     this.stopAutoStep = false;
-    setTimeout(this.onStepCode, this.state.timerSpeed);
+    setTimeout(this.onStepCode, 1100 - this.state.timerSpeed);
   }
 
   onStopAutoStepCode() {
