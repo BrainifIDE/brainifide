@@ -96,7 +96,10 @@ class IDE extends Component {
         <div className="buttons">
           <button onClick={ this.onRunCode }>Run</button>
           <button onClick={ this.onStepCode }>Stepthrough</button>
-          <input value={ this.state.timerSpeed }
+          <input type="range"
+                 min="100"
+                 max="1000"
+                 value={ this.state.timerSpeed }
                  onChange={ this.onTimerSpeedChange } />
           <button onClick={ this.onAutoStepCode }>Auto Stepthrough</button>
           <button onClick={ this.onStopAutoStepCode }>Stop Auto Stepthrough</button>
@@ -119,7 +122,7 @@ class IDE extends Component {
 
     const ast = parser(event.target.value);
     this.stepper = executeStep(ast, this.state.input);
-    clearInterval(this.intervalID);
+    this.stopAutoStep = true;
   }
 
   onInputChange(event) {
@@ -131,7 +134,7 @@ class IDE extends Component {
 
     const ast = parser(this.state.code);
     this.stepper = executeStep(ast, event.target.value);
-    clearInterval(this.intervalID);
+    this.stopAutoStep = true;
   }
 
   onRunCode() {
@@ -142,8 +145,6 @@ class IDE extends Component {
       stdout: executionResults.stdout,
       executionContext: executionResults.context
     });
-
-    clearInterval(this.intervalID);
   }
 
   onStepCode() {
@@ -157,12 +158,32 @@ class IDE extends Component {
     });
   }
 
+  recursiveStep() {
+    if (this.stopAutoStep) {
+      return;
+    }
+
+    this.stepper((context, stdout, instruction) => {
+      this.setState({
+        stdout,
+        executionContext: context,
+        line: instruction && instruction.line,
+        column: instruction && instruction.column
+      });
+
+      if (instruction) {
+        setTimeout(this.recursiveStep.bind(this), this.state.timerSpeed);
+      }
+    });
+  }
+
   onAutoStepCode() {
-    this.intervalID = setInterval(this.onStepCode, this.state.timerSpeed);
+    this.stopAutoStep = false;
+    setTimeout(this.recursiveStep.bind(this), this.state.timerSpeed);
   }
 
   onStopAutoStepCode() {
-    clearInterval(this.intervalID);
+    this.stopAutoStep = true;
   }
 
   onTimerSpeedChange(event) {
