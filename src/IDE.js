@@ -19,8 +19,6 @@ class IDE extends Component {
       timerSpeed: 1000,
       name: "",
       dirty: false,
-      line: 0,
-      column: 0,
       executionContext: {
         table: {},
         pointer: 0
