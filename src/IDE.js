@@ -52,6 +52,7 @@ class IDE extends Component {
           name: file.name,
           id: file.id
         });
+        this.stepper = executeStep(parser(file.content), this.state.input);
       } else {
         store.dispatch(selectFile(this.state.id));
       }
