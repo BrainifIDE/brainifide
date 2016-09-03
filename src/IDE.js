@@ -10,6 +10,8 @@ class IDE extends Component {
   constructor() {
     super();
 
+    this.intervalID;
+
     this.state = {
       id: -1,
       code: "",
@@ -20,7 +22,7 @@ class IDE extends Component {
       dirty: false,
       executionContext: {
         table: {},
-        position: 0
+        pointer: 0
       }
     };
 
@@ -106,6 +108,7 @@ class IDE extends Component {
 
     const ast = parser(event.target.value);
     this.stepper = executeStep(ast, this.state.input);
+    clearInterval(this.intervalID);
   }
 
   onInputChange(event) {
@@ -115,6 +118,7 @@ class IDE extends Component {
 
     const ast = parser(this.state.code);
     this.stepper = executeStep(ast, event.target.value);
+    clearInterval(this.intervalID);
   }
 
   onRunCode() {
@@ -125,6 +129,8 @@ class IDE extends Component {
       stdout: executionResults.stdout,
       executionContext: executionResults.context
     });
+
+    clearInterval(this.intervalID);
   }
 
   onStepCode() {
