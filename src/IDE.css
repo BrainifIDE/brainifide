@@ -1,0 +1,33 @@
+.IDE {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.IDE .code-container {
+  flex-basis: 0;
+  flex-grow: 60;
+}
+
+.IDE .input-container {
+  flex-basis: 0;
+  flex-grow: 20;
+}
+
+.IDE .buttons {
+  flex-basis: 0;
+  flex-grow: 10;
+}
+
+.IDE .stdout {
+  flex-basis: 0;
+  flex-grow: 10;
+}
+
+.IDE textarea {
+  resize: none;
+  height: 100%;
+  width: 100%;
+  font-family: 'Source Code Pro', monospace;
+  font-size: 15px;
+}

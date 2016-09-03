@@ -5,38 +5,14 @@
 }
 
 .App .left {
+  padding: 20px;
   flex-basis: 0;
   flex-grow: 20;
+  display: flex;
 }
 
 .App .right {
   flex-basis: 0;
   flex-grow: 80;
   display: flex;
-  flex-direction: column;
 }
-
-.App .code-container {
-  flex-basis: 0;
-  flex-grow: 80;
-
-  display: flex;
-}
-
-.App .code-container textarea {
-  flex-grow: 1;
-  resize: none;
-  font-family: 'Source Code Pro', monospace;
-  font-size: 15px;
-}
-
-.App .buttons {
-  flex-basis: 0;
-  flex-grow: 5;
-}
-
-.App .stdout {
-  flex-basis: 0;
-  flex-grow: 15;
-}
-

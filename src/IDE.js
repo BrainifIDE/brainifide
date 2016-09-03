@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { parser, execute, executeStep } from 'bfvm';
 import DataStoreVisualizer from './DataStoreVisualizer';
+import './IDE.css';
 
 class IDE extends Component {
   constructor() {
@@ -43,8 +44,8 @@ class IDE extends Component {
         <div className="buttons">
           <button onClick={ this.onRunCode }>Run</button>
           <button onClick={ this.onStepCode }>Stepthrough</button>
-          <textarea value={ this.state.timerSpeed }
-                    onChange={ this.onTimerSpeedChange } />
+          <input value={ this.state.timerSpeed }
+                 onChange={ this.onTimerSpeedChange } />
           <button onClick={ this.onAutoStepCode }>Auto Stepthrough</button>
           <button onClick={ this.onStopAutoStepCode }>Stop Auto Stepthrough</button>
         </div>

@@ -7,8 +7,13 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <FilesList />
-        <IDE />
+        <div className="left">
+          <FilesList />
+        </div>
+
+        <div className="right">
+          <IDE />
+        </div>
       </div>
     );
   }
