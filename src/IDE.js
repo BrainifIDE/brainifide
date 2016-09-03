@@ -5,6 +5,7 @@ import './IDE.css';
 import { addFile } from './store/actions/files';
 import store from './store/store';
 import { selectFile } from './store/actions/selectedFile';
+import snippetsEventEmitter from './SnippetEvents';
 
 class IDE extends Component {
   constructor() {
@@ -24,7 +25,7 @@ class IDE extends Component {
       }
     };
 
-    ["onInputChange", "onCodeChange", "onRunCode", "onStepCode", "onTimerSpeedChange", "onAutoStepCode", "onStopAutoStepCode", "onNameChange", "onSave"].forEach(fn => {
+    ["onInputChange", "onCodeChange", "onRunCode", "onStepCode", "onTimerSpeedChange", "onAutoStepCode", "onStopAutoStepCode", "onNameChange", "onSave", "onAddSnippet"].forEach(fn => {
       this[fn] = this[fn].bind(this);
     });
   }
@@ -55,6 +56,8 @@ class IDE extends Component {
         store.dispatch(selectFile(this.state.id));
       }
     });
+
+    snippetsEventEmitter.addSnippetsListener(this.onAddSnippet);
   }
 
   render() {
@@ -69,7 +72,8 @@ class IDE extends Component {
 
         <div className="code-container">
           <textarea value={ this.state.code }
-                    onChange={ this.onCodeChange } />
+                    onChange={ this.onCodeChange }
+                    ref={ c => this.code = c }/>
         </div>
 
         <h3>Inputs:</h3>
@@ -171,6 +175,21 @@ class IDE extends Component {
       id: this.state.id,
       content: this.state.code,
       name: this.state.name
+    });
+  }
+
+  onAddSnippet(snippet) {
+    const index = this.code.selectionStart;
+    let code = this.state.code.substr(0, index);
+
+    if (code.length && code[code.length - 1] !== '\n') {
+      code += "\n";
+    }
+
+    code = code + snippet + "\n" + this.state.code.substr(index);
+
+    this.setState({
+      code
     });
   }
 }

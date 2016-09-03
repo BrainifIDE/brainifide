@@ -1,0 +1,47 @@
+.MenuBar {
+  border-bottom: 1px solid gray;
+}
+
+.MenuBar ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.MenuBar > ul > li {
+  display: inline-block;
+  padding: 5px 15px;
+  cursor: pointer;
+}
+
+.MenuBar > ul > li:hover,
+.MenuBar > ul > li.active {
+  background-color: lightgray;
+}
+
+.MenuBar .submenu-container {
+  position: relative;
+}
+
+.MenuBar .submenu-container .submenu {
+  position: absolute;
+  top: 5px;
+  left: -15px;
+  min-width: 200px;
+  white-space: nowrap;
+  display: none;
+  background-color: white;
+}
+
+.MenuBar .active .submenu-container .submenu {
+  display: block;
+  border: 1px solid gray;
+}
+
+.MenuBar .submenu-container .submenu li {
+  padding: 5px 15px;
+}
+
+.MenuBar .submenu-container .submenu li:hover {
+  background-color: lightgray;
+}
