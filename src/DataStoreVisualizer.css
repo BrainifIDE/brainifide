@@ -6,4 +6,16 @@
   padding-left: 5px;
   padding-right: 5px;
   border: 1px solid black;
+  display: flex;
+  flex-direction: column;
+}
+
+.DataStoreVisualizer .cell:nth-of-type(6) {
+  border: 1px solid red;
+  background-color: rgba(255, 0, 0, 0.1);
+}
+
+.DataStoreVisualizer .cell div {
+  flex-basis: 0;
+  flex-grow: 1;
 }

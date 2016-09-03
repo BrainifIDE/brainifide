@@ -10,8 +10,6 @@ class IDE extends Component {
   constructor() {
     super();
 
-    this.intervalID;
-
     this.state = {
       id: -1,
       code: "",
