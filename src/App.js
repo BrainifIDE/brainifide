@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import { parser, execute } from 'bfvm';
+import DataStoreVisualizer from './DataStoreVisualizer';
 
 class App extends Component {
   constructor() {
@@ -9,7 +10,11 @@ class App extends Component {
     this.state = {
       code: "",
       stdout: "",
-      input: ""
+      input: "",
+      executionContext: {
+        table: {},
+        position: 0
+      }
     };
 
     ["onInputChange", "onCodeChange", "onRunCode"].forEach(fn => {
@@ -31,8 +36,12 @@ class App extends Component {
                     onChange={ this.onInputChange } />
         </div>
 
+        <div className="visualizer">
+          <DataStoreVisualizer executionContext={ this.state.executionContext } />
+        </div>
+
         <div className="buttons">
-          <button onClick={ this.onRunCode } >Run</button>
+          <button onClick={ this.onRunCode }>Run</button>
         </div>
 
         <div className="stdout">
@@ -60,7 +69,8 @@ class App extends Component {
     const ast = parser(this.state.code);
     const executionResults = execute(ast, this.state.input);
     this.setState({
-      stdout: executeResults.stdout
+      stdout: executionResults.stdout,
+      executionContext: executionResults.context
     });
   }
 }
