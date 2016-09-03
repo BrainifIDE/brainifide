@@ -1,5 +1,5 @@
-import { LOAD_FILES_LIST, SET_FILES_LIST } from '../actionTypes';
-import Dexie from 'dexie';
+import { LOAD_FILES_LIST, SET_FILES_LIST, ADD_FILE } from '../actionTypes';
+import dbPromise from '../../db';
 
 function loadFilesList() {
   return {
@@ -17,13 +17,7 @@ function setFilesList(files) {
 function initFilesList(dispatch) {
   dispatch(loadFilesList());
 
-  const db = new Dexie('bf');
-
-  db.version(1).stores({
-    codes: 'content,&name,created_at,updated_at'
-  });
-
-  db.open().then(() => {
+  dbPromise.then(db => {
     return db.codes.toArray();
   }).then(codes => {
     dispatch(setFilesList(codes));
@@ -32,4 +26,13 @@ function initFilesList(dispatch) {
   });
 }
 
-export { initFilesList };
+function addFile(dispatch, file) {
+  dbPromise.then(db => {
+    dispatch({
+      type: ADD_FILE,
+      file
+    });
+  });
+}
+
+export { initFilesList, addFile };

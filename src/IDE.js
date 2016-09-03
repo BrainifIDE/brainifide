@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { parser, execute, executeStep } from 'bfvm';
 import DataStoreVisualizer from './DataStoreVisualizer';
 import './IDE.css';
+import { addFile } from './store/actions/files';
+import store from './store/store';
 
 class IDE extends Component {
   constructor() {
@@ -12,13 +14,14 @@ class IDE extends Component {
       stdout: "",
       input: "",
       timerSpeed: 1000,
+      name: "",
       executionContext: {
         table: {},
         position: 0
       }
     };
 
-    ["onInputChange", "onCodeChange", "onRunCode", "onStepCode", "onTimerSpeedChange", "onAutoStepCode", "onStopAutoStepCode"].forEach(fn => {
+    ["onInputChange", "onCodeChange", "onRunCode", "onStepCode", "onTimerSpeedChange", "onAutoStepCode", "onStopAutoStepCode", "onNameChange", "onSave"].forEach(fn => {
       this[fn] = this[fn].bind(this);
     });
   }
@@ -26,6 +29,13 @@ class IDE extends Component {
   render() {
     return (
       <div className="IDE">
+        <div className="name-container">
+          <input type="text"
+                 value={ this.state.name }
+                 onChange={ this.onNameChange } />
+          <button onClick={ this.onSave }>Save</button>
+        </div>
+
         <div className="code-container">
           <textarea value={ this.state.code }
                     onChange={ this.onCodeChange } />
@@ -108,6 +118,19 @@ class IDE extends Component {
         timerSpeed: event.target.value
       });
     }
+  }
+
+  onNameChange(event) {
+    this.setState({
+      name: event.target.value
+    });
+  }
+
+  onSave() {
+    addFile(store.dispatch.bind(store), {
+      content: this.state.code,
+      name: this.state.name
+    });
   }
 }
 
