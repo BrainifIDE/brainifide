@@ -11,7 +11,17 @@ class DataStoreVisualizer extends Component {
     }
 
     return numbers.map((num, i) => {
-      return <div key={i} className="cell">{ num }</div>;
+      if (i == 5) {
+        return <div key={i} className="cell">
+               <tr>{ num }</tr>
+               <tr>{ context.pointer + i - 5 }</tr>
+               <tr>^</tr>
+               </div>;
+      }
+      return <div key={i} className="cell">
+              <tr>{ num }</tr>
+              <tr>{ context.pointer + i - 5 }</tr>
+             </div>;
     });
   }
 
