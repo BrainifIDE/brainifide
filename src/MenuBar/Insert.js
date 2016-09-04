@@ -87,8 +87,7 @@ class Insert extends Component {
       showSubmenu: false
     });
 
-    snippetsEventEmitter.emitSnippet("Modulo n % d; n: current cell, d: cell right of n");
-    snippetsEventEmitter.emitSnippet("[>->+<[>]>[<+>-]<<[<]>-]>[-]>[-<<+>>]<++++++++[<++++++>-]<.");
+    snippetsEventEmitter.emitSnippet("[>->+<[>]>[<+>-]<<[<]>-]>[-]>[-<<+>>]<++++++++[<++++++>-]<.", "Modulo n % d; n: current cell, d: cell right of n");
   }
 }
 
