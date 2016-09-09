@@ -6,7 +6,7 @@
     "react-scripts": "0.4.0"
   },
   "dependencies": {
-    "bfvm": "file:../bfvm",
+    "bfvm": "BrainifIDE/bfvm#c14295e9781c8092365ba2f1e2d57e57eb7dccf3",
     "dexie": "^1.4.1",
     "immutable": "^3.8.1",
     "react": "^15.3.1",
