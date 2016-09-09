@@ -98,7 +98,7 @@ class IDE extends Component {
                     ref={ c => this.code = c }/>
           <div style={{
             display: column !== undefined ? 'block' : 'none',
-            top: (20 * (line + 1) + 0) + "px",
+            top: (19 * (line + 1) + 1) + "px",
             left: (9 * column + 3) + "px"
           }} className="cursor"/>
         </div>
